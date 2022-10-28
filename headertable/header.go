@@ -7,30 +7,32 @@ import (
 
 type Header struct {
 	widget.Table
-	// tableOpts *TableOpts
+	tableOpts *TableOpts
 }
 
 func NewHeader(tableOpts *TableOpts) *Header {
-	h := &Header{
-		// tableOpts: tableOpts,
-	}
-	h.ExtendBaseWidget(h)
-
-	h.Length = func() (int, int) {
+	length := func() (int, int) {
 		return 1, len(tableOpts.ColAttrs)
 	}
 
-	h.CreateCell = func() fyne.CanvasObject {
+	createCell := func() fyne.CanvasObject {
 		return widget.NewLabel("the content")
 	}
 
-	h.UpdateCell = func(cellID widget.TableCellID, o fyne.CanvasObject) {
+	updateCell := func(cellID widget.TableCellID, o fyne.CanvasObject) {
 		l := o.(*widget.Label)
 		opts := tableOpts.ColAttrs[cellID.Col]
 		l.SetText(opts.Header)
 		l.TextStyle = opts.TextStyle
 		l.Alignment = opts.Alignment
 		l.Wrapping = opts.Wrapping
+		l.Refresh()
 	}
+	h := &Header{
+		tableOpts: tableOpts,
+		Table:     widget.Table{Length: length, CreateCell: createCell, UpdateCell: updateCell},
+	}
+	h.ExtendBaseWidget(h)
+
 	return h
 }
