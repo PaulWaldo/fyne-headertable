@@ -5,11 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Demo",
+            "name": "Plain Demo",
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/headertable/example/main.go"
+            "program": "${workspaceFolder}/headertable/cmd/plainheader/main.go"
+        },
+        {
+            "name": "Sort Demo",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/headertable/cmd/sortheader/main.go"
         }
     ]
 }

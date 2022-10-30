@@ -1,6 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"math/rand"
+	"time"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
@@ -75,8 +79,19 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("Header Table Test")
 	w.Resize(fyne.NewSize(624, 428))
-	ht := headertable.NewHeaderTable(&myTableOpts)
+	meta := headertable.NewLabelHeaderCellMeta(&myTableOpts)
+	ht := headertable.NewHeaderTable(meta)
+	meta.SetDataTable(ht.Data)
 	w.SetContent(container.NewMax(ht))
 	w.CenterOnScreen()
+	go func() {
+		for range time.Tick(50 * time.Millisecond) {
+			// Pick a random animal and adjust the Weight randomly
+			row := rand.Intn(len(animals))
+			newWeight := fmt.Sprintf("%d", rand.Intn(100))
+			animals[row].Weight = newWeight
+			ht.Refresh()
+		}
+	}()
 	w.ShowAndRun()
 }

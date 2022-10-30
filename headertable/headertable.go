@@ -27,6 +27,22 @@ type TableOpts struct {
 	OnDataCellSelect func(cellID widget.TableCellID)
 }
 
+type Header struct {
+	widget.Table
+}
+
+
+type HeaderCellMeta interface {
+	NewHeader(length func() (int, int), create func() fyne.CanvasObject, update func(widget.TableCellID, fyne.CanvasObject)) *Header
+	LengthFn() func() (int, int)
+	CreateCellFn() func() fyne.CanvasObject
+	UpdateCellFn() func(cellID widget.TableCellID, o fyne.CanvasObject)
+	TableOpts() *TableOpts
+	SetDataTable(*widget.Table)
+	UpdateDataTable()
+}
+
+
 type HeaderTable struct {
 	widget.BaseWidget
 	TableOpts    *TableOpts
@@ -34,14 +50,14 @@ type HeaderTable struct {
 	Data         *widget.Table
 }
 
-func NewHeaderTable(tableOpts *TableOpts) *HeaderTable {
+func NewHeaderTable(meta HeaderCellMeta) *HeaderTable {
 	t := &HeaderTable{
-		TableOpts:    tableOpts,
-		Header: NewHeader(tableOpts),
+		// TableOpts:    tableOpts,
+		Header: meta.NewHeader(meta.LengthFn(), meta.CreateCellFn(), meta.UpdateCellFn()),
 		Data: widget.NewTable(
 			// Dimensions (rows, cols)
 			func() (int, int) {
-				return len(tableOpts.Bindings), len(tableOpts.ColAttrs)
+				return len(meta.TableOpts().Bindings), len(meta.TableOpts().ColAttrs)
 			},
 
 			// Default value
@@ -52,8 +68,8 @@ func NewHeaderTable(tableOpts *TableOpts) *HeaderTable {
 			// Cell values
 			func(cellID widget.TableCellID, cnvObj fyne.CanvasObject) {
 				// str,_:=
-				b := tableOpts.Bindings[cellID.Row]
-				d, _ := b.GetItem(tableOpts.ColAttrs[cellID.Col].Name)
+				b := meta.TableOpts().Bindings[cellID.Row]
+				d, _ := b.GetItem(meta.TableOpts().ColAttrs[cellID.Col].Name)
 				str, _ := d.(binding.String).Get()
 				l := cnvObj.(*widget.Label)
 				l.SetText(str)
@@ -63,8 +79,8 @@ func NewHeaderTable(tableOpts *TableOpts) *HeaderTable {
 	t.ExtendBaseWidget(t)
 
 	// Set Column widths
-	refWidth := widget.NewLabel(tableOpts.RefWidth).MinSize().Width
-	for i, colAttr := range tableOpts.ColAttrs {
+	refWidth := widget.NewLabel(meta.TableOpts().RefWidth).MinSize().Width
+	for i, colAttr := range meta.TableOpts().ColAttrs {
 		t.Data.SetColumnWidth(i, float32(colAttr.WidthPercent)/100.0*refWidth)
 		t.Header.SetColumnWidth(i, float32(colAttr.WidthPercent)/100.0*refWidth)
 	}
