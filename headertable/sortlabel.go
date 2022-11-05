@@ -41,11 +41,8 @@ func NewSortingLabel(text string, sortFunc func()) *SortingLabel {
 		State:  SortUnsorted,
 		// IsSortCol: binding.NewBool(),
 	}
-	// sl.IsSortCol.Set(false)
 	sl.SetState(SortUnsorted)
 	sl.Button.OnTapped = sl.OnTapped
-	// sl.updateIcon()
-	// sl.Container = container.NewHBox(sl.Label, sl.Button)
 
 	sl.ExtendBaseWidget(sl)
 	return sl

@@ -16,42 +16,30 @@ func NewLabelHeaderCellMeta(tableOpts *TableOpts) HeaderCellMeta {
 	return &labelHeaderCellMeta{tableOpts: tableOpts}
 }
 
-func (m *labelHeaderCellMeta) NewHeader(
-	length func() (int, int),
-	create func() fyne.CanvasObject,
-	update func(widget.TableCellID, fyne.CanvasObject),
-) *Header {
-	h := &Header{Table: widget.Table{Length: length, CreateCell: create, UpdateCell: update}}
+func (m *labelHeaderCellMeta) NewHeader() *Header {
+	h := &Header{Table: widget.Table{
+		Length:     func() (int, int) { return 1, len(m.tableOpts.ColAttrs) },
+		CreateCell: func() fyne.CanvasObject { return widget.NewLabel("the content") },
+		UpdateCell: func(cellID widget.TableCellID, o fyne.CanvasObject) {
+			l := o.(*widget.Label)
+			opts := m.tableOpts.ColAttrs[cellID.Col]
+			l.SetText(opts.Header)
+			l.TextStyle = opts.TextStyle
+			l.Alignment = opts.Alignment
+			l.Wrapping = opts.Wrapping
+			l.Refresh()
+		},
+	}}
 	h.ExtendBaseWidget(h)
 	return h
 }
 
 func (m *labelHeaderCellMeta) UpdateDataTable() {
-	panic("Not implimented")
+	panic("Not implemented")
 }
 
 func (m *labelHeaderCellMeta) SetDataTable(t *widget.Table) {
 	m.DataTable = t
-}
-
-func (m labelHeaderCellMeta) LengthFn() func() (int, int) {
-	return func() (int, int) { return 1, len(m.tableOpts.ColAttrs) }
-}
-
-func (m labelHeaderCellMeta) CreateCellFn() func() fyne.CanvasObject {
-	return func() fyne.CanvasObject { return widget.NewLabel("the content") }
-}
-
-func (m labelHeaderCellMeta) UpdateCellFn() func(cellID widget.TableCellID, o fyne.CanvasObject) {
-	return func(cellID widget.TableCellID, o fyne.CanvasObject) {
-		l := o.(*widget.Label)
-		opts := m.tableOpts.ColAttrs[cellID.Col]
-		l.SetText(opts.Header)
-		l.TextStyle = opts.TextStyle
-		l.Alignment = opts.Alignment
-		l.Wrapping = opts.Wrapping
-		l.Refresh()
-	}
 }
 
 func (m *labelHeaderCellMeta) TableOpts() *TableOpts {

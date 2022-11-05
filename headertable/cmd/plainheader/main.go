@@ -80,7 +80,7 @@ func main() {
 	w := a.NewWindow("Header Table Test")
 	w.Resize(fyne.NewSize(624, 428))
 	meta := headertable.NewLabelHeaderCellMeta(&myTableOpts)
-	ht := headertable.NewHeaderTable(meta)
+	ht := headertable.NewHeaderTable(&meta)
 	meta.SetDataTable(ht.Data)
 	w.SetContent(container.NewMax(ht))
 	w.CenterOnScreen()
