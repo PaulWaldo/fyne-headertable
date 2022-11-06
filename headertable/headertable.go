@@ -31,7 +31,6 @@ type Header struct {
 	widget.Table
 }
 
-
 type HeaderCellMeta interface {
 	NewHeader() *Header
 	TableOpts() *TableOpts
@@ -39,22 +38,21 @@ type HeaderCellMeta interface {
 	UpdateDataTable()
 }
 
-
 type HeaderTable struct {
 	widget.BaseWidget
-	TableOpts    *TableOpts
-	Header       *Header
-	Data         *widget.Table
+	TableOpts *TableOpts
+	Header    *Header
+	Data      *widget.Table
 }
 
-func NewHeaderTable(meta *HeaderCellMeta) *HeaderTable {
+func NewHeaderTable(meta HeaderCellMeta) *HeaderTable {
 	t := &HeaderTable{
 		// TableOpts:    tableOpts,
-		Header: (*meta).NewHeader(),
+		Header: meta.NewHeader(),
 		Data: widget.NewTable(
 			// Dimensions (rows, cols)
 			func() (int, int) {
-				return len((*meta).TableOpts().Bindings), len((*meta).TableOpts().ColAttrs)
+				return len(meta.TableOpts().Bindings), len(meta.TableOpts().ColAttrs)
 			},
 
 			// Default value
@@ -65,8 +63,8 @@ func NewHeaderTable(meta *HeaderCellMeta) *HeaderTable {
 			// Cell values
 			func(cellID widget.TableCellID, cnvObj fyne.CanvasObject) {
 				// str,_:=
-				b := (*meta).TableOpts().Bindings[cellID.Row]
-				d, _ := b.GetItem((*meta).TableOpts().ColAttrs[cellID.Col].Name)
+				b := meta.TableOpts().Bindings[cellID.Row]
+				d, _ := b.GetItem(meta.TableOpts().ColAttrs[cellID.Col].Name)
 				str, _ := d.(binding.String).Get()
 				l := cnvObj.(*widget.Label)
 				l.SetText(str)
@@ -76,8 +74,8 @@ func NewHeaderTable(meta *HeaderCellMeta) *HeaderTable {
 	t.ExtendBaseWidget(t)
 
 	// Set Column widths
-	refWidth := widget.NewLabel((*meta).TableOpts().RefWidth).MinSize().Width
-	for i, colAttr := range (*meta).TableOpts().ColAttrs {
+	refWidth := widget.NewLabel(meta.TableOpts().RefWidth).MinSize().Width
+	for i, colAttr := range meta.TableOpts().ColAttrs {
 		t.Data.SetColumnWidth(i, float32(colAttr.WidthPercent)/100.0*refWidth)
 		t.Header.SetColumnWidth(i, float32(colAttr.WidthPercent)/100.0*refWidth)
 	}

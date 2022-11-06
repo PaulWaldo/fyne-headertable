@@ -27,7 +27,7 @@ func Test_stringSort(t *testing.T) {
 		{Name: "name0", Num: 2},
 	}
 	bindings := make([]binding.DataMap, len(data))
-	colAttrs := []ColAttr{{Name: "Name"},{Name: "Num"}}
+	colAttrs := []ColAttr{{Name: "Name"}, {Name: "Num"}}
 	for i := 0; i < len(data); i++ {
 		bindings[i] = binding.BindStruct(&data[i])
 	}
@@ -48,19 +48,19 @@ func Test_stringSort(t *testing.T) {
 func Test_sortLabelHeaderCellMeta_NewHeader(t *testing.T) {
 	to := TableOpts{ColAttrs: []ColAttr{
 		{
-			Name: "col1",
-			Header:"header1",
-			Alignment: fyne.TextAlignLeading,
-			TextStyle: fyne.TextStyle{Bold: true},
-			Wrapping: fyne.TextWrapOff,
+			Name:         "col1",
+			Header:       "header1",
+			Alignment:    fyne.TextAlignLeading,
+			TextStyle:    fyne.TextStyle{Bold: true},
+			Wrapping:     fyne.TextWrapOff,
 			WidthPercent: 50,
 		},
 		{
-			Name: "col2",
-			Header:"header2",
-			Alignment: fyne.TextAlignTrailing,
-			TextStyle: fyne.TextStyle{Italic: true},
-			Wrapping: fyne.TextWrapBreak,
+			Name:         "col2",
+			Header:       "header2",
+			Alignment:    fyne.TextAlignTrailing,
+			TextStyle:    fyne.TextStyle{Italic: true},
+			Wrapping:     fyne.TextWrapBreak,
 			WidthPercent: 25,
 		},
 	}}
@@ -74,8 +74,8 @@ func Test_sortLabelHeaderCellMeta_NewHeader(t *testing.T) {
 	template := h.Table.CreateCell()
 	assert.IsTypef(t, &SortingLabel{}, template, "Expecting type %T, got %T", widget.Label{}, template)
 
-	sl:= template.(*SortingLabel)
-	for i := range to.ColAttrs{
+	sl := template.(*SortingLabel)
+	for i := range to.ColAttrs {
 		h.Table.UpdateCell(widget.TableCellID{Row: 0, Col: i}, template)
 		assert.IsTypef(t, &SortingLabel{}, template, "Expecting type %T, got %T", widget.Label{}, template)
 		assert.Equal(t, to.ColAttrs[i].Header, sl.Label.Text)

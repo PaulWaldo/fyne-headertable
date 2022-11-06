@@ -24,12 +24,12 @@ type SortFn func(ascending bool)
 
 type SortingLabel struct {
 	widget.BaseWidget
-	State  SortState
-	Label  *widget.Label
-	Sorter SortFn
-	OnAfterSort    func()
-	Button *widget.Button
-	Col    int
+	State       SortState
+	Label       *widget.Label
+	Sorter      SortFn
+	OnAfterSort func()
+	Button      *widget.Button
+	Col         int
 	// Container *fyne.Container
 	// IsSortCol binding.Bool
 }

@@ -53,7 +53,7 @@ func stringSort(tableOpts *TableOpts, col int) SortFn {
 	}
 }
 
-func (m sortLabelHeaderCellMeta) NewHeader() *Header {
+func (m *sortLabelHeaderCellMeta) NewHeader() *Header {
 	h := &Header{Table: widget.Table{
 		Length:     func() (int, int) { return 1, len(m.tableOpts.ColAttrs) },
 		CreateCell: func() fyne.CanvasObject { return NewSortingLabel("the content", func() {}) },
