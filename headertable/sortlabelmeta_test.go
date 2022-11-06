@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/widget"
 	"github.com/stretchr/testify/assert"
@@ -67,6 +68,7 @@ func Test_sortLabelHeaderCellMeta_NewHeader(t *testing.T) {
 	m := NewSortLabelHeaderCellMeta(&to)
 	h := m.NewHeader()
 
+	app.New()
 	rows, cols := h.Table.Length()
 	assert.Equal(t, 1, rows, "Expecting 1 row, got %d", rows)
 	assert.Equal(t, len(to.ColAttrs), cols, "Expecting %d cols, got %d", len(to.ColAttrs), cols)
