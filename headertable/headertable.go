@@ -1,6 +1,7 @@
 package headertable
 
 import (
+	"log"
 	"math"
 
 	"fyne.io/fyne/v2"
@@ -47,7 +48,6 @@ type HeaderTable struct {
 
 func NewHeaderTable(meta HeaderCellMeta) *HeaderTable {
 	t := &HeaderTable{
-		// TableOpts:    tableOpts,
 		Header: meta.NewHeader(),
 		Data: widget.NewTable(
 			// Dimensions (rows, cols)
@@ -62,10 +62,16 @@ func NewHeaderTable(meta HeaderCellMeta) *HeaderTable {
 
 			// Cell values
 			func(cellID widget.TableCellID, cnvObj fyne.CanvasObject) {
-				// str,_:=
 				b := meta.TableOpts().Bindings[cellID.Row]
-				d, _ := b.GetItem(meta.TableOpts().ColAttrs[cellID.Col].Name)
-				str, _ := d.(binding.String).Get()
+				itemKey := meta.TableOpts().ColAttrs[cellID.Col].Name
+				d, err := b.GetItem(itemKey)
+				if err != nil {
+					log.Fatalf("Data table Update Cell callback, GetItem(%s): %s", itemKey, err)
+				}
+				str, err := d.(binding.String).Get()
+				if err != nil {
+					log.Fatalf("Data table Update Cell callback, Get: %s", err)
+				}
 				l := cnvObj.(*widget.Label)
 				l.SetText(str)
 			},

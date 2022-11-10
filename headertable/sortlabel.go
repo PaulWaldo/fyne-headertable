@@ -18,7 +18,7 @@ const (
 	SortDescending
 )
 
-// var _ fyne.Widget = (*SortingLabel)(nil)
+var _ fyne.Widget = (*SortingLabel)(nil)
 
 type SortFn func(ascending bool)
 
@@ -30,8 +30,6 @@ type SortingLabel struct {
 	OnAfterSort func()
 	Button      *widget.Button
 	Col         int
-	// Container *fyne.Container
-	// IsSortCol binding.Bool
 }
 
 func NewSortingLabel(text string, sortFunc func()) *SortingLabel {
@@ -52,19 +50,11 @@ func (s *SortingLabel) SetState(state SortState) {
 	s.State = state
 	switch s.State {
 	case SortUnsorted:
-		// s.Button.SetIcon(theme.ListIcon())
 		s.Button.SetIcon(data.IconSortSvg)
-		// s.IsSortCol.Set(false)
 	case SortAscending:
-		// s.Button.SetIcon(theme.MoveDownIcon())
 		s.Button.SetIcon(data.IconSortDownSvg)
-		// s.IsSortCol.Set(true)
-		// s.Button.OnTapped()
 	case SortDescending:
-		// s.Button.SetIcon(theme.MoveUpIcon())
 		s.Button.SetIcon(data.IconSortUpSvg)
-		// s.IsSortCol.Set(true)
-		// s.Button.OnTapped()
 	default:
 		log.Fatalf("Unknown sort label state: %d", s.State)
 	}

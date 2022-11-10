@@ -1,125 +1,85 @@
 package headertable
 
 import (
-	"reflect"
 	"testing"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/data/binding"
+	"fyne.io/fyne/v2/widget"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewHeaderTable(t *testing.T) {
-	// type args struct {
-	// 	meta HeaderCellMeta
-	// }
-	// tests := []struct {
-	// 	name string
-	// 	args args
-	// 	want *HeaderTable
-	// }{
-	// 	// TODO: Add test cases.
-	// }
-	// for _, tt := range tests {
-	// 	t.Run(tt.name, func(t *testing.T) {
-	// 		if got := NewHeaderTable(tt.args.meta); !reflect.DeepEqual(got, tt.want) {
-	// 			t.Errorf("NewHeaderTable() = %v, want %v", got, tt.want)
-	// 		}
-	// 	})
-	// }
 }
 
 func TestHeaderTable_CreateRenderer(t *testing.T) {
-	tests := []struct {
-		name string
-		h    *HeaderTable
-		want fyne.WidgetRenderer
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.h.CreateRenderer(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("HeaderTable.CreateRenderer() = %v, want %v", got, tt.want)
-			}
-		})
-	}
 }
 
 func Test_headerTableRenderer_MinSize(t *testing.T) {
-	tests := []struct {
-		name string
-		r    headerTableRenderer
-		want fyne.Size
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.r.MinSize(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("headerTableRenderer.MinSize() = %v, want %v", got, tt.want)
-			}
-		})
-	}
 }
 
 func Test_headerTableRenderer_Layout(t *testing.T) {
-	type args struct {
-		s fyne.Size
-	}
-	tests := []struct {
-		name string
-		r    headerTableRenderer
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tt.r.Layout(tt.args.s)
-		})
-	}
 }
 
 func Test_headerTableRenderer_Destroy(t *testing.T) {
-	tests := []struct {
-		name string
-		r    headerTableRenderer
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tt.r.Destroy()
-		})
-	}
 }
 
 func Test_headerTableRenderer_Refresh(t *testing.T) {
-	tests := []struct {
-		name string
-		r    headerTableRenderer
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tt.r.Refresh()
-		})
-	}
 }
 
 func Test_headerTableRenderer_Objects(t *testing.T) {
-	tests := []struct {
-		name string
-		r    headerTableRenderer
-		want []fyne.CanvasObject
-	}{
-		// TODO: Add test cases.
+}
+
+func TestHeaderTable(t *testing.T) {
+	type carInfo struct {
+		Year, Make, Model string
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.r.Objects(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("headerTableRenderer.Objects() = %v, want %v", got, tt.want)
-			}
-		})
+	cars := []carInfo{
+		{Year: "1980", Make: "Toyota", Model: "Corolla"},
+		{Year: "2020", Make: "Toyota", Model: "Corolla"},
+		{Year: "2020", Make: "Ford", Model: "Mustang"},
+		{Year: "2022", Make: "Tesla", Model: "Model X"},
+	}
+	bindings := make([]binding.DataMap, len(cars))
+	for i := range cars {
+		bindings[i] = binding.BindStruct(&cars[i])
+	}
+	opts := TableOpts{
+		ColAttrs: []ColAttr{
+			{Name: "Year", Header: "The Year", WidthPercent: 25, TextStyle: fyne.TextStyle{Bold: true}},
+			{Name: "Make", Header: "The Make", WidthPercent: 50},
+			{Name: "Models", Header: "The Model", WidthPercent: 75, Wrapping: fyne.TextTruncate},
+		},
+		RefWidth: "I am prototypical",
+		Bindings: bindings,
+	}
+	meta := NewLabelHeaderCellMeta(&opts)
+	ht := NewHeaderTable(meta)
+	meta.SetDataTable(ht.Data)
+
+	rows, cols := ht.Header.Table.Length()
+	assert.Equal(t, 3, cols, "Expecting %d cols, got %d", 3, cols)
+	assert.Equal(t, 1, rows, "Expecting %d rows, got %d", 1, rows)
+
+	// Test that the headers are as expected
+	// Create a template and see what the Header's UpdateCell callback transforms it to
+	for i := range opts.ColAttrs {
+		template := ht.Header.Table.CreateCell().(*widget.Label)
+		ht.Header.Table.UpdateCell(widget.TableCellID{Row: 0, Col: i}, template)
+		assert.Equal(t, opts.ColAttrs[i].Header, template.Text)
+		assert.Equal(t, opts.ColAttrs[i].Alignment, template.Alignment)
+		assert.Equal(t, opts.ColAttrs[i].TextStyle, template.TextStyle)
+		assert.Equal(t, opts.ColAttrs[i].Wrapping, template.Wrapping)
+	}
+
+	// Test that the data table contains expected values
+	for i := range cars{
+		template := ht.Data.CreateCell().(*widget.Label)
+		ht.Data.UpdateCell(widget.TableCellID{Row: i, Col: 0}, template)
+		assert.Equal(t, cars[i].Year, template.Text)
+		ht.Data.UpdateCell(widget.TableCellID{Row: i, Col: 1}, template)
+		assert.Equal(t, cars[i].Make, template.Text)
+		ht.Data.UpdateCell(widget.TableCellID{Row: i, Col: 2}, template)
+		assert.Equal(t, cars[i].Model, template.Text)
 	}
 }
