@@ -5,6 +5,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/data/binding"
+	"fyne.io/fyne/v2/test"
 	"fyne.io/fyne/v2/widget"
 	"github.com/stretchr/testify/assert"
 )
@@ -48,11 +49,12 @@ func TestHeaderTable(t *testing.T) {
 		ColAttrs: []ColAttr{
 			{Name: "Year", Header: "The Year", WidthPercent: 25, TextStyle: fyne.TextStyle{Bold: true}},
 			{Name: "Make", Header: "The Make", WidthPercent: 50},
-			{Name: "Models", Header: "The Model", WidthPercent: 75, Wrapping: fyne.TextTruncate},
+			{Name: "Model", Header: "The Model", WidthPercent: 75, Wrapping: fyne.TextTruncate},
 		},
 		RefWidth: "I am prototypical",
 		Bindings: bindings,
 	}
+	test.NewApp()
 	meta := NewLabelHeaderCellMeta(&opts)
 	ht := NewHeaderTable(meta)
 	meta.SetDataTable(ht.Data)
@@ -73,7 +75,7 @@ func TestHeaderTable(t *testing.T) {
 	}
 
 	// Test that the data table contains expected values
-	for i := range cars{
+	for i := range cars {
 		template := ht.Data.CreateCell().(*widget.Label)
 		ht.Data.UpdateCell(widget.TableCellID{Row: i, Col: 0}, template)
 		assert.Equal(t, cars[i].Year, template.Text)
