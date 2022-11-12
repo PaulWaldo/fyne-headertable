@@ -18,11 +18,11 @@ const (
 	SortDescending
 )
 
-var _ fyne.Widget = (*SortingLabel)(nil)
+var _ fyne.Widget = (*sortingLabel)(nil)
 
 type SortFn func(ascending bool)
 
-type SortingLabel struct {
+type sortingLabel struct {
 	widget.BaseWidget
 	State       SortState
 	Label       *widget.Label
@@ -32,12 +32,11 @@ type SortingLabel struct {
 	Col         int
 }
 
-func NewSortingLabel(text string, sortFunc func()) *SortingLabel {
-	sl := &SortingLabel{
+func NewSortingLabel(text string) *sortingLabel {
+	sl := &sortingLabel{
 		Label:  widget.NewLabel(text),
 		Button: widget.NewButton("", func() {}),
 		State:  SortUnsorted,
-		// IsSortCol: binding.NewBool(),
 	}
 	sl.SetState(SortUnsorted)
 	sl.Button.OnTapped = sl.OnTapped
@@ -46,7 +45,7 @@ func NewSortingLabel(text string, sortFunc func()) *SortingLabel {
 	return sl
 }
 
-func (s *SortingLabel) SetState(state SortState) {
+func (s *sortingLabel) SetState(state SortState) {
 	s.State = state
 	switch s.State {
 	case SortUnsorted:
@@ -61,7 +60,7 @@ func (s *SortingLabel) SetState(state SortState) {
 	s.Button.Refresh()
 }
 
-func (s *SortingLabel) nextState() SortState {
+func (s *sortingLabel) nextState() SortState {
 	switch s.State {
 	case SortUnsorted:
 		return SortAscending
@@ -75,13 +74,17 @@ func (s *SortingLabel) nextState() SortState {
 	}
 }
 
-func (s *SortingLabel) OnTapped() {
+func (s *sortingLabel) OnTapped() {
 	s.SetState(s.nextState())
-	s.Sorter(s.State == SortAscending)
-	s.OnAfterSort()
+	if s.Sorter != nil {
+		s.Sorter(s.State == SortAscending)
+	}
+	if s.OnAfterSort != nil {
+		s.OnAfterSort()
+	}
 }
 
-func (sl *SortingLabel) CreateRenderer() fyne.WidgetRenderer {
+func (sl *sortingLabel) CreateRenderer() fyne.WidgetRenderer {
 	return &sortingLabelRenderer{
 		sortLabel: sl,
 		container: container.NewHBox(sl.Label, sl.Button),
@@ -91,7 +94,7 @@ func (sl *SortingLabel) CreateRenderer() fyne.WidgetRenderer {
 var _ fyne.WidgetRenderer = (*sortingLabelRenderer)(nil)
 
 type sortingLabelRenderer struct {
-	sortLabel *SortingLabel
+	sortLabel *sortingLabel
 	container *fyne.Container
 }
 

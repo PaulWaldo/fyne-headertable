@@ -12,13 +12,16 @@ import (
 var _ HeaderCellMeta = (*sortLabelHeaderCellMeta)(nil)
 
 type sortLabelHeaderCellMeta struct {
-	tableOpts  *TableOpts
 	DataTable  *widget.Table
-	sortLabels []*SortingLabel
+	sortLabels []*sortingLabel
+	tableOpts  *TableOpts
 }
 
 func NewSortLabelHeaderCellMeta(tableOpts *TableOpts) HeaderCellMeta {
-	return &sortLabelHeaderCellMeta{tableOpts: tableOpts, sortLabels: make([]*SortingLabel, len(tableOpts.ColAttrs))}
+	return &sortLabelHeaderCellMeta{
+		tableOpts: tableOpts,
+		sortLabels: make([]*sortingLabel, len(tableOpts.ColAttrs)),
+	}
 }
 
 func stringSort(tableOpts *TableOpts, col int) SortFn {
@@ -56,9 +59,9 @@ func stringSort(tableOpts *TableOpts, col int) SortFn {
 func (m *sortLabelHeaderCellMeta) NewHeader() *Header {
 	h := &Header{Table: widget.Table{
 		Length:     func() (int, int) { return 1, len(m.tableOpts.ColAttrs) },
-		CreateCell: func() fyne.CanvasObject { return NewSortingLabel("the content", func() {}) },
+		CreateCell: func() fyne.CanvasObject { return NewSortingLabel("the content") },
 		UpdateCell: func(cellID widget.TableCellID, o fyne.CanvasObject) {
-			l := o.(*SortingLabel)
+			l := o.(*sortingLabel)
 			m.sortLabels[cellID.Col] = l
 			col := cellID.Col
 			opts := m.tableOpts.ColAttrs[col]
