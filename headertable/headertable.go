@@ -10,60 +10,45 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-var _ fyne.WidgetRenderer = headerTableRenderer{}
-
-type ColAttr struct {
-	Name         string
-	Header       string
-	Alignment    fyne.TextAlign
-	Wrapping     fyne.TextWrap
-	TextStyle    fyne.TextStyle
-	WidthPercent int
-}
-
-type TableOpts struct {
-	ColAttrs         []ColAttr
-	RefWidth         string
-	Bindings         []binding.DataMap
-	OnDataCellSelect func(cellID widget.TableCellID)
-}
-
-type Header struct {
-	widget.Table
-}
-
-type HeaderCellMeta interface {
-	NewHeader() *Header
-	TableOpts() *TableOpts
-	SetDataTable(*widget.Table)
-	UpdateDataTable()
-}
+var _ fyne.Widget = &HeaderTable{}
 
 type HeaderTable struct {
 	widget.BaseWidget
 	TableOpts *TableOpts
-	Header    *Header
+	Header    *widget.Table
 	Data      *widget.Table
 }
 
-func NewHeaderTable(meta HeaderCellMeta) *HeaderTable {
+func NewHeaderTable(tableOpts *TableOpts) *HeaderTable {
 	t := &HeaderTable{
-		Header: meta.NewHeader(),
+		TableOpts: tableOpts,
+		Header: widget.NewTable(
+			// Dimensions (rows, cols)
+			func() (int, int) { return 1, len(tableOpts.ColAttrs) },
+			// Default value
+			func() fyne.CanvasObject { return widget.NewLabel("the content") },
+			// Cell values
+			func(cellID widget.TableCellID, o fyne.CanvasObject) {
+				l := o.(*widget.Label)
+				opts := tableOpts.ColAttrs[cellID.Col]
+				l.SetText(opts.Header)
+				l.TextStyle = opts.TextStyle
+				l.Alignment = opts.Alignment
+				l.Wrapping = opts.Wrapping
+				l.Refresh()
+			},
+		),
 		Data: widget.NewTable(
 			// Dimensions (rows, cols)
-			func() (int, int) {
-				return len(meta.TableOpts().Bindings), len(meta.TableOpts().ColAttrs)
-			},
+			func() (int, int) { return len(tableOpts.Bindings), len(tableOpts.ColAttrs) },
 
 			// Default value
-			func() fyne.CanvasObject {
-				return widget.NewLabel("wide content")
-			},
+			func() fyne.CanvasObject { return widget.NewLabel("wide content") },
 
 			// Cell values
 			func(cellID widget.TableCellID, cnvObj fyne.CanvasObject) {
-				b := meta.TableOpts().Bindings[cellID.Row]
-				itemKey := meta.TableOpts().ColAttrs[cellID.Col].Name
+				b := tableOpts.Bindings[cellID.Row]
+				itemKey := tableOpts.ColAttrs[cellID.Col].Name
 				d, err := b.GetItem(itemKey)
 				if err != nil {
 					log.Fatalf("Data table Update Cell callback, GetItem(%s): %s", itemKey, err)
@@ -80,8 +65,8 @@ func NewHeaderTable(meta HeaderCellMeta) *HeaderTable {
 	t.ExtendBaseWidget(t)
 
 	// Set Column widths
-	refWidth := widget.NewLabel(meta.TableOpts().RefWidth).MinSize().Width
-	for i, colAttr := range meta.TableOpts().ColAttrs {
+	refWidth := widget.NewLabel(t.TableOpts.RefWidth).MinSize().Width
+	for i, colAttr := range t.TableOpts.ColAttrs {
 		t.Data.SetColumnWidth(i, float32(colAttr.WidthPercent)/100.0*refWidth)
 		t.Header.SetColumnWidth(i, float32(colAttr.WidthPercent)/100.0*refWidth)
 	}
@@ -90,6 +75,8 @@ func NewHeaderTable(meta HeaderCellMeta) *HeaderTable {
 }
 
 //*******************************************************************************
+
+var _ fyne.WidgetRenderer = headerTableRenderer{}
 
 type headerTableRenderer struct {
 	headerTable *HeaderTable

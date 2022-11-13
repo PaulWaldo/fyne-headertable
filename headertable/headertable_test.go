@@ -55,19 +55,17 @@ func TestHeaderTable(t *testing.T) {
 		Bindings: bindings,
 	}
 	test.NewApp()
-	meta := NewLabelHeaderCellMeta(&opts)
-	ht := NewHeaderTable(meta)
-	meta.SetDataTable(ht.Data)
+	ht := NewHeaderTable(&opts)
 
-	rows, cols := ht.Header.Table.Length()
+	rows, cols := ht.Header.Length()
 	assert.Equal(t, 3, cols, "Expecting %d cols, got %d", 3, cols)
 	assert.Equal(t, 1, rows, "Expecting %d rows, got %d", 1, rows)
 
 	// Test that the headers are as expected
 	// Create a template and see what the Header's UpdateCell callback transforms it to
 	for i := range opts.ColAttrs {
-		template := ht.Header.Table.CreateCell().(*widget.Label)
-		ht.Header.Table.UpdateCell(widget.TableCellID{Row: 0, Col: i}, template)
+		template := ht.Header.CreateCell().(*widget.Label)
+		ht.Header.UpdateCell(widget.TableCellID{Row: 0, Col: i}, template)
 		assert.Equal(t, opts.ColAttrs[i].Header, template.Text)
 		assert.Equal(t, opts.ColAttrs[i].Alignment, template.Alignment)
 		assert.Equal(t, opts.ColAttrs[i].TextStyle, template.TextStyle)
