@@ -2,9 +2,9 @@ name: Go
 
 on:
   push:
-    branches: ["develop"]
+    branches: ["develop", "master"]
   pull_request:
-    branches: ["develop"]
+    branches: ["develop", "master"]
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: 1.18
-          
+
       - uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
