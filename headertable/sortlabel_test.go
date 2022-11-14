@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/test"
 	"github.com/PaulWaldo/fyne-headertable/headertable/data"
 	"github.com/stretchr/testify/assert"
 )
@@ -24,6 +24,25 @@ func TestNewSortingLabel(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := NewSortingLabel(tt.args.text); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewSortingLabel() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestSortingLabel_nextState(t *testing.T) {
+	tests := []struct {
+		name string
+		s    *sortingLabel
+		want SortState
+	}{
+		{name: "ascending->descending", s: &sortingLabel{State: SortAscending}, want: SortDescending},
+		{name: "descending->ascending", s: &sortingLabel{State: SortAscending}, want: SortDescending},
+		{name: "unsorted->ascending", s: &sortingLabel{State: SortUnsorted}, want: SortAscending},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.s.nextState(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("SortingLabel.nextState() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -60,39 +79,17 @@ func TestSortingLabel_SetState(t *testing.T) {
 	}
 }
 
-func TestSortingLabel_nextState(t *testing.T) {
-	tests := []struct {
-		name string
-		s    *sortingLabel
-		want SortState
-	}{
-		{name: "ascending->descending", s: &sortingLabel{State: SortAscending}, want: SortDescending},
-		{name: "descending->ascending", s: &sortingLabel{State: SortAscending}, want: SortDescending},
-		{name: "unsorted->ascending", s: &sortingLabel{State: SortUnsorted}, want: SortAscending},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.nextState(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("SortingLabel.nextState() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-
-func TestSortingLabel_CreateRenderer(t *testing.T) {
-	tests := []struct {
-		name string
-		sl   *sortingLabel
-		want fyne.WidgetRenderer
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.sl.CreateRenderer(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("SortingLabel.CreateRenderer() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+func TestSortingLabel_OnTapped_CyclesSortStates(t *testing.T) {
+	sl := NewSortingLabel("some text")
+	assert.Equal(t, SortUnsorted, sl.State)
+	assert.Equal(t, data.IconSortSvg.Name(), sl.Button.Icon.Name())
+	test.Tap(sl.Button)
+	assert.Equal(t, SortAscending, sl.State)
+	assert.Equal(t, data.IconSortDownSvg.Name(), sl.Button.Icon.Name())
+	test.Tap(sl.Button)
+	assert.Equal(t, SortDescending, sl.State)
+	assert.Equal(t, data.IconSortUpSvg.Name(), sl.Button.Icon.Name())
+	test.Tap(sl.Button)
+	assert.Equal(t, SortAscending, sl.State)
+	assert.Equal(t, data.IconSortDownSvg.Name(), sl.Button.Icon.Name())
 }
