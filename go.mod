@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	fyne.io/fyne/v2 v2.2.4
-	github.com/stretchr/testify v1.7.2
+	github.com/stretchr/testify v1.8.1
 )
 
 require (
