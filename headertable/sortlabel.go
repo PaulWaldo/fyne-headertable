@@ -5,6 +5,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
 	"github.com/PaulWaldo/fyne-headertable/headertable/data"
 
 	"fyne.io/fyne/v2/widget"
@@ -50,10 +51,13 @@ func (s *sortingLabel) SetState(state SortState) {
 	switch s.State {
 	case SortUnsorted:
 		s.Button.SetIcon(data.IconSortSvg)
+		s.Button.Importance = widget.MediumImportance
 	case SortAscending:
 		s.Button.SetIcon(data.IconSortDownSvg)
+		s.Button.Importance = widget.HighImportance
 	case SortDescending:
 		s.Button.SetIcon(data.IconSortUpSvg)
+		s.Button.Importance = widget.HighImportance
 	default:
 		log.Fatalf("Unknown sort label state: %d", s.State)
 	}
@@ -85,9 +89,11 @@ func (s *sortingLabel) OnTapped() {
 }
 
 func (sl *sortingLabel) CreateRenderer() fyne.WidgetRenderer {
+	spacer := &layout.Spacer{FixHorizontal: true}
+	spacedButton := container.NewHBox(sl.Button, spacer)
 	return &sortingLabelRenderer{
 		sortLabel: sl,
-		container: container.NewHBox(sl.Label, sl.Button),
+		container: container.NewBorder(nil, nil, nil, spacedButton, sl.Label),
 	}
 }
 
