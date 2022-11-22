@@ -56,7 +56,7 @@ func Test_stringSort(t *testing.T) {
 		{Name: "name1", Num: 1},
 		{Name: "name0", Num: 2},
 	}
-	bindings := make([]binding.DataMap, len(data))
+	bindings := make([]binding.Struct, len(data))
 	colAttrs := []ColAttr{{Name: "Name"}, {Name: "Num"}}
 	for i := 0; i < len(data); i++ {
 		bindings[i] = binding.BindStruct(&data[i])
