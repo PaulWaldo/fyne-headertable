@@ -19,11 +19,11 @@ const (
 	SortDescending
 )
 
-var _ fyne.Widget = (*sortingLabel)(nil)
+var _ fyne.Widget = (*SortingLabel)(nil)
 
 type SortFn func(ascending bool)
 
-type sortingLabel struct {
+type SortingLabel struct {
 	widget.BaseWidget
 	State       SortState
 	Label       *widget.Label
@@ -33,8 +33,8 @@ type sortingLabel struct {
 	Col         int
 }
 
-func NewSortingLabel(text string) *sortingLabel {
-	sl := &sortingLabel{
+func NewSortingLabel(text string) *SortingLabel {
+	sl := &SortingLabel{
 		Label:  widget.NewLabel(text),
 		Button: widget.NewButton("", func() {}),
 		State:  SortUnsorted,
@@ -46,7 +46,7 @@ func NewSortingLabel(text string) *sortingLabel {
 	return sl
 }
 
-func (s *sortingLabel) SetState(state SortState) {
+func (s *SortingLabel) SetState(state SortState) {
 	s.State = state
 	switch s.State {
 	case SortUnsorted:
@@ -64,7 +64,7 @@ func (s *sortingLabel) SetState(state SortState) {
 	s.Button.Refresh()
 }
 
-func (s *sortingLabel) nextState() SortState {
+func (s *SortingLabel) nextState() SortState {
 	switch s.State {
 	case SortUnsorted:
 		return SortAscending
@@ -78,7 +78,7 @@ func (s *sortingLabel) nextState() SortState {
 	}
 }
 
-func (s *sortingLabel) OnTapped() {
+func (s *SortingLabel) OnTapped() {
 	s.SetState(s.nextState())
 	if s.Sorter != nil {
 		s.Sorter(s.State == SortAscending)
@@ -88,7 +88,7 @@ func (s *sortingLabel) OnTapped() {
 	}
 }
 
-func (sl *sortingLabel) CreateRenderer() fyne.WidgetRenderer {
+func (sl *SortingLabel) CreateRenderer() fyne.WidgetRenderer {
 	spacer := &layout.Spacer{FixHorizontal: true}
 	spacedButton := container.NewHBox(sl.Button, spacer)
 	return &sortingLabelRenderer{
@@ -100,7 +100,7 @@ func (sl *sortingLabel) CreateRenderer() fyne.WidgetRenderer {
 var _ fyne.WidgetRenderer = (*sortingLabelRenderer)(nil)
 
 type sortingLabelRenderer struct {
-	sortLabel *sortingLabel
+	sortLabel *SortingLabel
 	container *fyne.Container
 }
 

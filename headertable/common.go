@@ -2,7 +2,6 @@ package headertable
 
 import (
 	"fmt"
-	"log"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
@@ -25,7 +24,8 @@ func dataTableUpdateFunc(tableOpts *TableOpts) func(cellID widget.TableCellID, c
 		itemKey := tableOpts.ColAttrs[cellID.Col].Name
 		v, err := b.GetValue(itemKey)
 		if err != nil {
-			log.Fatalf("Error getting value for key %q: %s", itemKey, err)
+			fyne.LogError("Error getting value for key:", err)
+			return
 		}
 		convert := tableOpts.ColAttrs[cellID.Col].Converter
 		if convert == nil {

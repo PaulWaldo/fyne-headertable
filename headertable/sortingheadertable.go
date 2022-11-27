@@ -18,11 +18,11 @@ type SortingHeaderTable struct {
 	TableOpts  *TableOpts
 	Header     *widget.Table
 	Data       *widget.Table
-	sortLabels []*sortingLabel
+	sortLabels []*SortingLabel
 }
 
 func NewSortingHeaderTable(tableOpts *TableOpts) *SortingHeaderTable {
-	sortLabels := make([]*sortingLabel, len(tableOpts.ColAttrs))
+	sortLabels := make([]*SortingLabel, len(tableOpts.ColAttrs))
 	dataTable := widget.NewTable(dataTableLengthFunc(tableOpts), dataTableCreateFunc, dataTableUpdateFunc(tableOpts))
 	headerTable := widget.NewTable(
 		// Dimensions (rows, cols)
@@ -31,7 +31,7 @@ func NewSortingHeaderTable(tableOpts *TableOpts) *SortingHeaderTable {
 		func() fyne.CanvasObject { return NewSortingLabel("the content") },
 		// Cell values
 		func(cellID widget.TableCellID, o fyne.CanvasObject) {
-			l := o.(*sortingLabel)
+			l := o.(*SortingLabel)
 			sortLabels[cellID.Col] = l
 			col := cellID.Col
 			opts := tableOpts.ColAttrs[col]
@@ -81,11 +81,13 @@ func stringSort(tableOpts *TableOpts, col int) SortFn {
 			itemKey := tableOpts.ColAttrs[col].Name
 			v1, err := b1.GetValue(itemKey)
 			if err != nil {
-				log.Fatalf("Error getting value for key %q: %s", itemKey, err)
+				fyne.LogError("Error getting value for key:", err)
+				return true
 			}
 			v2, err := b2.GetValue(itemKey)
 			if err != nil {
-				log.Fatalf("Error getting value for key %q: %s", itemKey, err)
+				fyne.LogError("Error getting value for key:", err)
+				return true
 			}
 			convert := tableOpts.ColAttrs[col].Converter
 			if convert == nil {
@@ -110,7 +112,7 @@ func (h *SortingHeaderTable) CreateRenderer() fyne.WidgetRenderer {
 	}
 }
 
-//*******************************************************************************
+// ****************** Renderer *******************************
 
 var _ fyne.WidgetRenderer = sortingHeaderTableRenderer{}
 

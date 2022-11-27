@@ -55,7 +55,7 @@ func NewHeaderTable(tableOpts *TableOpts) *HeaderTable {
 	return t
 }
 
-//*******************************************************************************
+// ****************** Renderer *******************************
 
 var _ fyne.WidgetRenderer = headerTableRenderer{}
 
