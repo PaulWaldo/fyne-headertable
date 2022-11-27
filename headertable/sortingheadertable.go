@@ -1,13 +1,13 @@
 package headertable
 
 import (
+	"fmt"
 	"log"
 	"math"
 	"sort"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -23,29 +23,7 @@ type SortingHeaderTable struct {
 
 func NewSortingHeaderTable(tableOpts *TableOpts) *SortingHeaderTable {
 	sortLabels := make([]*sortingLabel, len(tableOpts.ColAttrs))
-	dataTable := widget.NewTable(
-		// Dimensions (rows, cols)
-		func() (int, int) { return len(tableOpts.Bindings), len(tableOpts.ColAttrs) },
-
-		// Default value
-		func() fyne.CanvasObject { return widget.NewLabel("wide content") },
-
-		// Cell values
-		func(cellID widget.TableCellID, cnvObj fyne.CanvasObject) {
-			b := tableOpts.Bindings[cellID.Row]
-			itemKey := tableOpts.ColAttrs[cellID.Col].Name
-			d, err := b.GetItem(itemKey)
-			if err != nil {
-				log.Fatalf("Data table Update Cell callback, GetItem(%s): %s", itemKey, err)
-			}
-			str, err := d.(binding.String).Get()
-			if err != nil {
-				log.Fatalf("Data table Update Cell callback, Get: %s", err)
-			}
-			l := cnvObj.(*widget.Label)
-			l.SetText(str)
-		},
-	)
+	dataTable := widget.NewTable(dataTableLengthFunc(tableOpts), dataTableCreateFunc, dataTableUpdateFunc(tableOpts))
 	headerTable := widget.NewTable(
 		// Dimensions (rows, cols)
 		func() (int, int) { return 1, len(tableOpts.ColAttrs) },
@@ -69,9 +47,9 @@ func NewSortingHeaderTable(tableOpts *TableOpts) *SortingHeaderTable {
 			}
 			l.Col = col
 			l.Label.SetText(opts.Header)
-			l.Label.TextStyle = opts.TextStyle
-			l.Label.Alignment = opts.Alignment
-			l.Label.Wrapping = opts.Wrapping
+			l.Label.TextStyle = opts.HeaderStyle.TextStyle
+			l.Label.Alignment = opts.HeaderStyle.Alignment
+			l.Label.Wrapping = opts.HeaderStyle.Wrapping
 			l.Refresh()
 		},
 	)
@@ -100,22 +78,22 @@ func stringSort(tableOpts *TableOpts, col int) SortFn {
 		sort.Slice(bindings, func(i int, j int) bool {
 			b1 := bindings[i]
 			b2 := bindings[j]
-			d1, err := b1.GetItem(tableOpts.ColAttrs[col].Name)
+			itemKey := tableOpts.ColAttrs[col].Name
+			v1, err := b1.GetValue(itemKey)
 			if err != nil {
-				panic(err)
+				log.Fatalf("Error getting value for key %q: %s", itemKey, err)
 			}
-			d2, err := b2.GetItem(tableOpts.ColAttrs[col].Name)
+			v2, err := b2.GetValue(itemKey)
 			if err != nil {
-				panic(err)
+				log.Fatalf("Error getting value for key %q: %s", itemKey, err)
 			}
-			str1, err := d1.(binding.String).Get()
-			if err != nil {
-				panic(err)
+			convert := tableOpts.ColAttrs[col].Converter
+			if convert == nil {
+				convert = func(i interface{}) string { return fmt.Sprintf("%s", i) }
 			}
-			str2, err := d2.(binding.String).Get()
-			if err != nil {
-				panic(err)
-			}
+			str1 := convert(v1)
+			str2 := convert(v2)
+
 			if ascending {
 				return str1 < str2
 			} else {
