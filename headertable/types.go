@@ -6,17 +6,23 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
+type CellStyle struct {
+	Alignment fyne.TextAlign
+	TextStyle fyne.TextStyle
+	Wrapping  fyne.TextWrap
+}
+
 type ColAttr struct {
-	Alignment    fyne.TextAlign
+	Converter    BindingConverter
+	DataStyle    CellStyle
 	Header       string
+	HeaderStyle  CellStyle
 	Name         string
-	TextStyle    fyne.TextStyle
 	WidthPercent int
-	Wrapping     fyne.TextWrap
 }
 
 type TableOpts struct {
-	Bindings         []binding.DataMap
+	Bindings         []binding.Struct
 	ColAttrs         []ColAttr
 	OnDataCellSelect func(cellID widget.TableCellID)
 	RefWidth         string
