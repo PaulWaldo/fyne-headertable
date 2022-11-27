@@ -59,7 +59,7 @@ func (s *SortingLabel) SetState(state SortState) {
 		s.Button.SetIcon(data.IconSortUpSvg)
 		s.Button.Importance = widget.HighImportance
 	default:
-		log.Fatalf("Unknown sort label state: %d", s.State)
+		log.Printf("Unknown sort label state: %d\n", s.State)
 	}
 	s.Button.Refresh()
 }
