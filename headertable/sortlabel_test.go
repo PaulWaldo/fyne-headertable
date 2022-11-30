@@ -16,7 +16,7 @@ func TestNewSortingLabel(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *sortingLabel
+		want *SortingLabel
 	}{
 		// TODO: Add test cases.
 	}
@@ -32,12 +32,12 @@ func TestNewSortingLabel(t *testing.T) {
 func TestSortingLabel_nextState(t *testing.T) {
 	tests := []struct {
 		name string
-		s    *sortingLabel
+		s    *SortingLabel
 		want SortState
 	}{
-		{name: "ascending->descending", s: &sortingLabel{State: SortAscending}, want: SortDescending},
-		{name: "descending->ascending", s: &sortingLabel{State: SortAscending}, want: SortDescending},
-		{name: "unsorted->ascending", s: &sortingLabel{State: SortUnsorted}, want: SortAscending},
+		{name: "ascending->descending", s: &SortingLabel{State: SortAscending}, want: SortDescending},
+		{name: "descending->ascending", s: &SortingLabel{State: SortAscending}, want: SortDescending},
+		{name: "unsorted->ascending", s: &SortingLabel{State: SortUnsorted}, want: SortAscending},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

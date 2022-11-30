@@ -10,26 +10,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewHeaderTable(t *testing.T) {
-}
+// func TestNewHeaderTable(t *testing.T) {
+// }
 
-func TestHeaderTable_CreateRenderer(t *testing.T) {
-}
+// func TestHeaderTable_CreateRenderer(t *testing.T) {
+// }
 
-func Test_headerTableRenderer_MinSize(t *testing.T) {
-}
+// func Test_headerTableRenderer_MinSize(t *testing.T) {
+// }
 
-func Test_headerTableRenderer_Layout(t *testing.T) {
-}
+// func Test_headerTableRenderer_Layout(t *testing.T) {
+// }
 
-func Test_headerTableRenderer_Destroy(t *testing.T) {
-}
+// func Test_headerTableRenderer_Destroy(t *testing.T) {
+// }
 
-func Test_headerTableRenderer_Refresh(t *testing.T) {
-}
+// func Test_headerTableRenderer_Refresh(t *testing.T) {
+// }
 
-func Test_headerTableRenderer_Objects(t *testing.T) {
-}
+// func Test_headerTableRenderer_Objects(t *testing.T) {
+// }
 
 func TestHeaderTable(t *testing.T) {
 	type carInfo struct {
@@ -41,15 +41,15 @@ func TestHeaderTable(t *testing.T) {
 		{Year: "2020", Make: "Ford", Model: "Mustang"},
 		{Year: "2022", Make: "Tesla", Model: "Model X"},
 	}
-	bindings := make([]binding.DataMap, len(cars))
+	bindings := make([]binding.Struct, len(cars))
 	for i := range cars {
 		bindings[i] = binding.BindStruct(&cars[i])
 	}
 	opts := TableOpts{
 		ColAttrs: []ColAttr{
-			{Name: "Year", Header: "The Year", WidthPercent: 25, TextStyle: fyne.TextStyle{Bold: true}},
+			{Name: "Year", Header: "The Year", WidthPercent: 25, HeaderStyle: CellStyle{TextStyle: fyne.TextStyle{Bold: true}}},
 			{Name: "Make", Header: "The Make", WidthPercent: 50},
-			{Name: "Model", Header: "The Model", WidthPercent: 75, Wrapping: fyne.TextTruncate},
+			{Name: "Model", Header: "The Model", WidthPercent: 75, HeaderStyle: CellStyle{Wrapping: fyne.TextTruncate}},
 		},
 		RefWidth: "I am prototypical",
 		Bindings: bindings,
@@ -67,9 +67,9 @@ func TestHeaderTable(t *testing.T) {
 		template := ht.Header.CreateCell().(*widget.Label)
 		ht.Header.UpdateCell(widget.TableCellID{Row: 0, Col: i}, template)
 		assert.Equal(t, opts.ColAttrs[i].Header, template.Text)
-		assert.Equal(t, opts.ColAttrs[i].Alignment, template.Alignment)
-		assert.Equal(t, opts.ColAttrs[i].TextStyle, template.TextStyle)
-		assert.Equal(t, opts.ColAttrs[i].Wrapping, template.Wrapping)
+		assert.Equal(t, opts.ColAttrs[i].HeaderStyle.Alignment, template.Alignment)
+		assert.Equal(t, opts.ColAttrs[i].HeaderStyle.TextStyle, template.TextStyle)
+		assert.Equal(t, opts.ColAttrs[i].HeaderStyle.Wrapping, template.Wrapping)
 	}
 
 	// Test that the data table contains expected values
