@@ -120,4 +120,4 @@ func (r *sortingLabelRenderer) Objects() []fyne.CanvasObject {
 	return []fyne.CanvasObject{r.container}
 }
 
-func (r *sortingLabelRenderer) Destroy() {}
+func (*sortingLabelRenderer) Destroy() {}
