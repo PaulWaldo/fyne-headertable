@@ -1,6 +1,6 @@
 # fyne-headertable
 
-![Coverage](https://img.shields.io/badge/Coverage-82.5%25-brightgreen)
+![Coverage](https://img.shields.io/badge/Coverage-82.9%25-brightgreen)
 
 Table with header row for Fyne UI library
 
