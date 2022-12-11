@@ -1,7 +1,6 @@
 package headertable
 
 import (
-	"fmt"
 	"log"
 	"math"
 	"sort"
@@ -91,7 +90,7 @@ func stringSort(tableOpts *TableOpts, col int) SortFn {
 			}
 			convert := tableOpts.ColAttrs[col].Converter
 			if convert == nil {
-				convert = func(i interface{}) string { return fmt.Sprintf("%s", i) }
+				convert = DisplayAsString
 			}
 			str1 := convert(v1)
 			str2 := convert(v2)
@@ -131,7 +130,7 @@ func (r sortingHeaderTableRenderer) Layout(s fyne.Size) {
 	r.container.Resize(s)
 }
 
-func (r sortingHeaderTableRenderer) Destroy() {
+func (sortingHeaderTableRenderer) Destroy() {
 }
 
 func (r sortingHeaderTableRenderer) Refresh() {
