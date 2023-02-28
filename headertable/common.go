@@ -1,8 +1,6 @@
 package headertable
 
 import (
-	"fmt"
-
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
 )
@@ -29,7 +27,7 @@ func dataTableUpdateFunc(tableOpts *TableOpts) func(cellID widget.TableCellID, c
 		}
 		convert := tableOpts.ColAttrs[cellID.Col].Converter
 		if convert == nil {
-			convert = func(i interface{}) string { return fmt.Sprintf("%s", i) }
+			convert = DisplayAsString
 		}
 		l := cnvObj.(*widget.Label)
 		opts := tableOpts.ColAttrs[cellID.Col]

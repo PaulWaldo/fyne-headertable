@@ -1,7 +1,6 @@
 package data
 
 import (
-	"fmt"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -31,7 +30,7 @@ var TableOpts = headertable.TableOpts{
 				Alignment: fyne.TextAlignTrailing,
 			},
 			WidthPercent: 90,
-			Converter:    func(i interface{}) string { return fmt.Sprintf("%0.2f", i) },
+			Converter:    headertable.DisplayAsCurrency,
 		},
 		{
 			Name:   "Memo",
@@ -56,10 +55,7 @@ var TableOpts = headertable.TableOpts{
 				TextStyle: fyne.TextStyle{Italic: true},
 			},
 			WidthPercent: 70,
-			Converter: func(i interface{}) string {
-				t := i.(time.Time)
-				return t.Format("2006-01-02")
-			},
+			Converter:    headertable.DisplayAsISODate,
 		},
 	},
 }

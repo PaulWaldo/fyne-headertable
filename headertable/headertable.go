@@ -90,7 +90,7 @@ func (r headerTableRenderer) Layout(s fyne.Size) {
 	r.container.Resize(s)
 }
 
-func (r headerTableRenderer) Destroy() {
+func (headerTableRenderer) Destroy() {
 }
 
 func (r headerTableRenderer) Refresh() {
