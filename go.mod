@@ -3,12 +3,12 @@ module github.com/PaulWaldo/fyne-headertable
 go 1.19
 
 require (
-	fyne.io/fyne/v2 v2.3.1
+	fyne.io/fyne/v2 v2.3.3
 	github.com/stretchr/testify v1.8.2
 )
 
 require (
-	fyne.io/systray v1.10.1-0.20230207085535-4a244dbb9d03 // indirect
+	fyne.io/systray v1.10.1-0.20230312215936-7f71b037e260 // indirect
 	github.com/benoitkugler/textlayout v0.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fredbi/uri v1.0.0 // indirect
