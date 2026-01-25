@@ -38,7 +38,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
@@ -52,7 +52,7 @@ jobs:
           # Details on CodeQL's query packs refer to : https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
           # queries: security-extended,security-and-quality
       - name: Setup Go environment
-        uses: actions/setup-go@v3.2.0
+        uses: actions/setup-go@v6
       #       with:
       # The Go version to download (if necessary) and use. Supports semver spec and ranges.
       #         go-version: # optional
